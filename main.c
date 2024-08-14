@@ -9,16 +9,17 @@
     #define CLEAR system("clear")
 #endif
 
-char area[3][3] = {
+char field[3][3] = {
     {0, 0, 0},
     {0, 0, 0},
     {0, 0, 0},
 };
+char player = 1;
 
-void output() {
+void output_field() {
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            switch (area[i][j])
+            switch (field[i][j])
             {
                 case 0:
                     printf(" - ");
@@ -39,19 +40,20 @@ void output() {
             printf("--- --- ---\n");
         }
     }
+    printf("\n");
 }
 
-void clear_area() {
+void clear_field() {
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            area[i][j] = 0;
+            field[i][j] = 0;
         }
     }   
 }
 
-void win(char player) {
+void win() {
     CLEAR;
-    output();
+    output_field();
     printf("Player %d win!\n", player);
 
     char inp;
@@ -62,7 +64,7 @@ void win(char player) {
 }
 void draw() {
     CLEAR;
-    output();
+    output_field();
     printf("Draw!\n");  
 
     char inp; 
@@ -71,41 +73,55 @@ void draw() {
     } while (inp != 'e');
 }
 
+void change_player() {
+    if (player < 2) {
+        player++;
+    } else {
+        player = 1;
+    }
+}
 int input(char *c, char *r) {
-    while (1)
-    {
-        printf("Area: ");
-        if(scanf("%hhd", &(*r)) != 1) {
-            return -1;
-        } 
+    while(1){
+        CLEAR;
+        output_field();
+        printf("Player %d:\n", player);
+        printf("Row: ");
+
+        if (scanf("%hhd", &(*r)) != 1) {
+            while (getchar() != '\n');  // Очистка входного буффера
+            continue;
+        }
         if (*r > 0 && *r < 4) {
             break;
         };
     }
-    
-    while (1)
-    {
+    while(1) {
+        CLEAR;
+        output_field();
+        printf("Player %d:\n", player);
         printf("Column: ");
-        if(scanf("%hhd", &(*c)) != 1) {
-            return -1;
+
+        if (scanf("%hhd", &(*c)) != 1) {
+            while (getchar() != '\n');  // Очистка входного буффера
+            continue;
         }
         if (*c > 0 && *c < 4) {
             break;
         }
     }
 
-    if(area[*r - 1][*c - 1] == 1 || area[*r - 1][*c - 1] == 2) {
+    if(field[*r - 1][*c - 1] == 1 || field[*r - 1][*c - 1] == 2) {
         return -1;
     };
 
     return 0;
 }
 
-int check_win(char player) {
+int check_win() {
     //  Горизрнтали
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            if (area[i][j] != player) {
+            if (field[i][j] != player) {
                 break;
             } else if (j == 2) return 1;
         }
@@ -113,21 +129,21 @@ int check_win(char player) {
     //  Вертикали
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            if (area[j][i] != player) {
+            if (field[j][i] != player) {
                 break;
             } else if (j == 2) return 1;
         }
     }
     //  Диагонали
-    if(area[1][1] == player) {
-        if(area[0][0] == player && area[2][2] == player) return 1;
-        if(area[0][2] == player && area[2][0] == player) return 1;
+    if(field[1][1] == player) {
+        if(field[0][0] == player && field[2][2] == player) return 1;
+        if(field[0][2] == player && field[2][0] == player) return 1;
     }
 
     //Проверка ничьи
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            if(area[i][j] == 0) {
+            if(field[i][j] == 0) {
                 return 0;
             }
             if(i == 2 && j == 2) return 2;
@@ -137,43 +153,38 @@ int check_win(char player) {
     return 0;
 } 
 
-int process(char player, char c, char r) {
-    area[r - 1][c - 1] = player; // add 
+int process(char c, char r) {   
+    field[r - 1][c - 1] = player;   //  Добавление хода на карту
 
-    int check = check_win(player);
+    int check = check_win();    // return:  1 - победа, 2 - ничья, иначе - 0 
     switch (check)
     {
     case 1:
-        win(player);
+        win();
         return 1;
     case 2:
         draw();
         return 1;    
-
     }
+    change_player();
+
     return 0;
 }
 
 int main() {
     char col, row;
-    char player = 1;
-    
     while (1) {
-
         CLEAR;
-        output();
+        output_field();
 
-        printf("Player %d:\n", player);
         if(input(&col, &row)) {
             return 0;
         }
  
-        if (process(player, col, row)) {
-            clear_area();
-        };
-
-        player++;
-        if (player > 2) player = 1; 
+        if (process(col, row)) {
+            clear_field();
+            change_player();
+        }; 
     }
     return 0;
 }
