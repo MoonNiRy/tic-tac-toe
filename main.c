@@ -81,7 +81,7 @@ void change_player() {
     }
 }
 int input(char *c, char *r) {
-    while(1){
+    while(1){  // Ввод строки поля
         CLEAR;
         output_field();
         printf("Player %d:\n", player);
@@ -95,7 +95,7 @@ int input(char *c, char *r) {
             break;
         };
     }
-    while(1) {
+    while(1) {  // Ввод колонны поля
         CLEAR;
         output_field();
         printf("Player %d:\n", player);
@@ -110,7 +110,7 @@ int input(char *c, char *r) {
         }
     }
 
-    if(field[*r - 1][*c - 1] == 1 || field[*r - 1][*c - 1] == 2) {
+    if(field[*r - 1][*c - 1] == 1 || field[*r - 1][*c - 1] == 2) {  // Проверка свободы клетки 
         return -1;
     };
 
