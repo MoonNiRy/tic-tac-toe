@@ -87,7 +87,7 @@ int input(char *c, char *r) {
         printf("Player %d:\n", player);
         printf("Row: ");
 
-        if (scanf("%hhd", &(*r)) != 1) {
+        if (scanf("%hhd", r)) != 1) {
             while (getchar() != '\n');  // Очистка входного буффера
             continue;
         }
@@ -101,7 +101,7 @@ int input(char *c, char *r) {
         printf("Player %d:\n", player);
         printf("Column: ");
 
-        if (scanf("%hhd", &(*c)) != 1) {
+        if (scanf("%hhd", c) != 1) {
             while (getchar() != '\n');  // Очистка входного буффера
             continue;
         }
